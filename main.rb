@@ -111,11 +111,15 @@ end
 
 imgur_save_data("album", imgur_selected_album)
 
-exit 0 unless ARGV.length == 1
+exit 0 unless ARGV.length > 0
 
-logger.info "Listening to #{File.expand_path(ARGV[0])}"
+watch_dir = ARGV.map { |dir| File.expand_path(dir) }
 
-listener = Listen.to(File.expand_path(ARGV[0])) do |_, added, _|
+watch_dir.each do |dir|
+  logger.info "Listening to #{dir}"
+end
+
+listener = Listen.to(watch_dir) do |_, added, _|
   added.select! { |name| %w(.jpg .png .gif).include?(File.extname(name).downcase) }
   added.each do |name|
     logger.info "File added: #{name}"
@@ -137,5 +141,5 @@ listener = Listen.to(File.expand_path(ARGV[0])) do |_, added, _|
   end
 end
 listener.start
-logger.info "#{File.expand_path(ARGV[0])}: Ready."
+logger.info "Ready."
 sleep
