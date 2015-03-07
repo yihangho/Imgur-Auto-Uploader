@@ -4,9 +4,14 @@ require 'json'
 require 'clipboard'
 require 'terminal-notifier'
 require 'listen'
+require 'logger'
 
 CLIENT_ID     = "3d6d0225e3085ca"
 CLIENT_SECRET = "9f0c976c4b4739e9113fcdaba9b11b8c01b215f2"
+
+def logger
+  @logger ||= Logger.new(File.expand_path("~/Library/Logs/com.yihangho.imgur-auto-uploader.log"))
+end
 
 def imgur_read_saved_data
   path = File.expand_path("~/.imgur-auto-uploader")
@@ -70,11 +75,11 @@ def imgur_prompt_for_album(albums)
 end
 
 def imgur_upload_image(image_path, access_token, album)
-  puts "Uploaded '#{image_path}'"
   path = "https://api.imgur.com/3/image"
 
+  logger.info "Uploading #{image_path}."
   response = RestClient.post(path, {image: File.open(image_path, "rb"), album: album}, Authorization: "Bearer #{access_token}")
-  p response.headers
+  # p response.headers
   JSON.parse(response)["data"]
 end
 
@@ -109,14 +114,19 @@ imgur_save_data("album", imgur_selected_album)
 exit 0 unless ARGV.length == 1
 
 pid = Process.fork do
+  logger.info "Listening to #{File.expand_path(ARGV[0])}"
+
   listener = Listen.to(File.expand_path(ARGV[0])) do |_, added, _|
     added.select! { |name| %w(.jpg .png .gif).include?(File.extname(name).downcase) }
+    added.each do |name|
+      logger.info "File added: #{name}"
+    end
 
     unless added.empty?
       added.map do |path|
         Thread.new(path) do |path|
           imgur_upload_response = imgur_upload_image(path, imgur_access_token, imgur_selected_album)
-          puts imgur_upload_response["link"]
+          logger.info "Link for #{path}: #{imgur_upload_response["link"]}"
           Thread.current[:link] = imgur_upload_response["link"]
         end
       end.each do |thread|
@@ -128,7 +138,7 @@ pid = Process.fork do
     end
   end
   listener.start
-  puts "sleeping"
+  logger.info "#{File.expand_path(ARGV[0])}: Ready."
   sleep
 end
 
