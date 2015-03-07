@@ -113,33 +113,29 @@ imgur_save_data("album", imgur_selected_album)
 
 exit 0 unless ARGV.length == 1
 
-pid = Process.fork do
-  logger.info "Listening to #{File.expand_path(ARGV[0])}"
+logger.info "Listening to #{File.expand_path(ARGV[0])}"
 
-  listener = Listen.to(File.expand_path(ARGV[0])) do |_, added, _|
-    added.select! { |name| %w(.jpg .png .gif).include?(File.extname(name).downcase) }
-    added.each do |name|
-      logger.info "File added: #{name}"
-    end
+listener = Listen.to(File.expand_path(ARGV[0])) do |_, added, _|
+  added.select! { |name| %w(.jpg .png .gif).include?(File.extname(name).downcase) }
+  added.each do |name|
+    logger.info "File added: #{name}"
+  end
 
-    unless added.empty?
-      added.map do |path|
-        Thread.new(path) do |path|
-          imgur_upload_response = imgur_upload_image(path, imgur_access_token, imgur_selected_album)
-          logger.info "Link for #{path}: #{imgur_upload_response["link"]}"
-          Thread.current[:link] = imgur_upload_response["link"]
-        end
-      end.each do |thread|
-        thread.join
-
-        Clipboard.copy(thread[:link])
-        TerminalNotifier.notify("File uploaded, link copied.")
+  unless added.empty?
+    added.map do |path|
+      Thread.new(path) do |path|
+        imgur_upload_response = imgur_upload_image(path, imgur_access_token, imgur_selected_album)
+        logger.info "Link for #{path}: #{imgur_upload_response["link"]}"
+        Thread.current[:link] = imgur_upload_response["link"]
       end
+    end.each do |thread|
+      thread.join
+
+      Clipboard.copy(thread[:link])
+      TerminalNotifier.notify("File uploaded, link copied.")
     end
   end
-  listener.start
-  logger.info "#{File.expand_path(ARGV[0])}: Ready."
-  sleep
 end
-
-Process.detach(pid)
+listener.start
+logger.info "#{File.expand_path(ARGV[0])}: Ready."
+sleep
