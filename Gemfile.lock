@@ -1,0 +1,38 @@
+PATH
+  remote: .
+  specs:
+    imgur-auto-uploader (0.0.1)
+      clipboard (~> 1.0.6)
+      listen (~> 2.8.5)
+      rest-client (~> 1.7.2)
+      terminal-notifier (~> 1.6.2)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    celluloid (0.16.0)
+      timers (~> 4.0.0)
+    clipboard (1.0.6)
+    ffi (1.9.6)
+    hitimes (1.2.2)
+    listen (2.8.5)
+      celluloid (>= 0.15.2)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
+    mime-types (2.4.3)
+    netrc (0.10.3)
+    rb-fsevent (0.9.4)
+    rb-inotify (0.9.5)
+      ffi (>= 0.5.0)
+    rest-client (1.7.3)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
+    terminal-notifier (1.6.2)
+    timers (4.0.1)
+      hitimes
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  imgur-auto-uploader!
