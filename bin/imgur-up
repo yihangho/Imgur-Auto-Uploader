@@ -74,6 +74,9 @@ listener = Listen.to(watch_dir) do |_, added, _|
   end
 end
 
+Signal.trap("INT")  { exit 0 }
+Signal.trap("TERM") { exit 0 }
+
 listener.start
 logger.info "Ready."
 sleep
