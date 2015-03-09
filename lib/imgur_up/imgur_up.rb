@@ -33,7 +33,12 @@ module ImgurUp
       end
 
       default_index = albums.find_index { |album| album["id"] == config["album"] }
-      album_index = prompt("Select the album to upload new files to", default_index + 1).to_i - 1
+      album_index =
+        if default_index.nil?
+          prompt("Select the album to upload new files to").to_i - 1
+        else
+          prompt("Select the album to upload new files to", default_index + 1).to_i - 1
+        end
       config["album"] = albums[album_index]["id"]
 
       save_config
