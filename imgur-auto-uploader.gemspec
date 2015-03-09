@@ -1,6 +1,10 @@
+$:.unshift File.join(File.dirname(__FILE__), "lib")
+
+require 'imgur_up/version'
+
 Gem::Specification.new do |s|
   s.name    = 'imgur-auto-uploader'
-  s.version = '0.0.1'
+  s.version = ImgurUp::VERSION
   s.license = 'MIT'
   s.author  = 'Yihang Ho'
   s.summary = 'Automatically upload images to Imgur.'

@@ -9,6 +9,7 @@ imgur_up = ImgurUp::ImgurUp.new("~/.imgur-auto-uploader")
 
 Mercenary.program("imgur-up") do |p|
   p.description 'Imgur Auto-Uploader watches folders and uploads new images to Imgur.'
+  p.version ImgurUp::VERSION
   p.syntax 'imgur-up <subcommand> [options]'
 
   p.define_singleton_method(:command_with_development_mode) do |name, &block|

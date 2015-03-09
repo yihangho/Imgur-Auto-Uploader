@@ -1,5 +1,6 @@
 require 'imgur_up/imgur'
 require 'imgur_up/imgur_up'
+require 'imgur_up/version'
 require 'logger'
 
 module ImgurUp
