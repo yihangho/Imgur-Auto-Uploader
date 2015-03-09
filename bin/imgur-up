@@ -3,17 +3,39 @@
 $:.unshift File.join(File.dirname(__FILE__), *%w{ .. lib })
 
 require 'imgur_up'
+require 'mercenary'
 
 imgur_up = ImgurUp::ImgurUp.new("~/.imgur-auto-uploader-dev")
 
-imgur_up.prompt_for_configuration if imgur_up.needs_configuration?
+Mercenary.program("imgur-up") do |p|
+  p.description 'Imgur Auto-Uploader watches folders and uploads new images to Imgur.'
+  p.syntax 'imgur-up <subcommand>'
 
-exit 0 unless ARGV.length > 0
+  p.command(:config) do |c|
+    c.syntax 'config'
+    c.description 'Configure Imgur Auto-Uploader. This command needs to be run at least once.'
 
-imgur_up.watch(ARGV)
+    c.action do
+      imgur_up.prompt_for_configuration
+    end
+  end
 
-Signal.trap("INT")  { exit 0 }
-Signal.trap("TERM") { exit 0 }
+  p.command(:watch) do |c|
+    c.syntax 'watch PATH1 [PATH2 [PATH3 ...]]'
+    c.description 'Watches PATHs for new images and upload them to Imgur.'
 
-ImgurUp.logger.info "Ready."
-sleep
+    c.action do |args|
+      imgur_up.watch(args)
+
+      Signal.trap("INT")  { exit 0 }
+      Signal.trap("TERM") { exit 0 }
+
+      ImgurUp.logger.info "Ready."
+      sleep
+    end
+  end
+
+  p.action do |args|
+    puts p if args.empty? || !p.has_command?(args.first)
+  end
+end
