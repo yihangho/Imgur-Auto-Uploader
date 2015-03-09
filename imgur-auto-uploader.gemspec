@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'clipboard', '~> 1.0.6'
   s.add_runtime_dependency 'listen', '~> 2.8.5'
+  s.add_runtime_dependency 'mercenary', '~> 0.3.5'
   s.add_runtime_dependency 'rest-client', '~> 1.7.2'
   s.add_runtime_dependency 'terminal-notifier', '~> 1.6.2'
 end

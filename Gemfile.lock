@@ -4,6 +4,7 @@ PATH
     imgur-auto-uploader (0.0.1)
       clipboard (~> 1.0.6)
       listen (~> 2.8.5)
+      mercenary (~> 0.3.5)
       rest-client (~> 1.7.2)
       terminal-notifier (~> 1.6.2)
 
@@ -19,6 +20,7 @@ GEM
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
+    mercenary (0.3.5)
     mime-types (2.4.3)
     netrc (0.10.3)
     rb-fsevent (0.9.4)
