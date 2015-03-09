@@ -5,6 +5,6 @@ require 'logger'
 
 module ImgurUp
   def self.logger
-    @logger ||= Logger.new(File.expand_path("~/Library/Logs/com.yihangho.imgur-auto-uploader"))
+    @logger ||= Logger.new(File.expand_path("~/Library/Logs/com.yihangho.imgur-auto-uploader.log"))
   end
 end
