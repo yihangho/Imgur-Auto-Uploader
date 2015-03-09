@@ -5,13 +5,25 @@ $:.unshift File.join(File.dirname(__FILE__), *%w{ .. lib })
 require 'imgur_up'
 require 'mercenary'
 
-imgur_up = ImgurUp::ImgurUp.new("~/.imgur-auto-uploader-dev")
+imgur_up = ImgurUp::ImgurUp.new("~/.imgur-auto-uploader")
 
 Mercenary.program("imgur-up") do |p|
   p.description 'Imgur Auto-Uploader watches folders and uploads new images to Imgur.'
-  p.syntax 'imgur-up <subcommand>'
+  p.syntax 'imgur-up <subcommand> [options]'
 
-  p.command(:config) do |c|
+  p.define_singleton_method(:command_with_development_mode) do |name, &block|
+    p.command(name) do |c|
+      c.option 'dev', '--dev', 'Run in development mode.'
+
+      c.action do |_, options|
+        imgur_up = ImgurUp::ImgurUp.new("~/.imgur-auto-uploader-dev") if options["dev"]
+      end
+
+      block.call(c)
+    end
+  end
+
+  p.command_with_development_mode(:config) do |c|
     c.syntax 'config'
     c.description 'Configure Imgur Auto-Uploader. This command needs to be run at least once.'
 
@@ -20,7 +32,7 @@ Mercenary.program("imgur-up") do |p|
     end
   end
 
-  p.command(:watch) do |c|
+  p.command_with_development_mode(:watch) do |c|
     c.syntax 'watch PATH1 [PATH2 [PATH3 ...]]'
     c.description 'Watches PATHs for new images and upload them to Imgur.'
 
