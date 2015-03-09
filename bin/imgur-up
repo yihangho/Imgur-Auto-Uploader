@@ -2,81 +2,18 @@
 
 $:.unshift File.join(File.dirname(__FILE__), *%w{ .. lib })
 
-require 'base64'
-require 'clipboard'
-require 'terminal-notifier'
-require 'listen'
-require 'logger'
-
 require 'imgur_up'
 
-def logger
-  @logger ||= Logger.new(File.expand_path("~/Library/Logs/com.yihangho.imgur-auto-uploader.log"))
-end
+imgur_up = ImgurUp::ImgurUp.new("~/.imgur-auto-uploader-dev")
 
-def configure(imgur)
-  print "Enter your client ID: "
-  imgur.config["client_id"] = STDIN.gets.strip
-  print "Enter your client secret: "
-  imgur.config["client_secret"] = STDIN.gets.strip
-
-  puts "Log on to the following URL to obtain a PIN."
-  puts imgur.pin_request_url
-  print "Enter PIN: "
-  pin = STDIN.gets.strip
-  imgur.authorize(pin)
-
-  puts "Your albums:"
-  albums = imgur.albums
-  albums.each_with_index do |album, index|
-    puts "#{index+1}: #{album["title"]}"
-  end
-  print "Select the album to upload new files to: "
-  album_index = STDIN.gets.to_i - 1
-  imgur.config["album"] = albums[album_index]["id"]
-
-  imgur.write_config
-end
-
-imgur = ImgurUp::Imgur.new(logger)
-
-if imgur.needs_configuration?
-  configure(imgur)
-end
+imgur_up.prompt_for_configuration if imgur_up.needs_configuration?
 
 exit 0 unless ARGV.length > 0
 
-watch_dir = ARGV.map { |dir| File.expand_path(dir) }
-
-watch_dir.each do |dir|
-  logger.info "Listening to #{dir}"
-end
-
-listener = Listen.to(watch_dir) do |_, added, _|
-  added.select! { |name| %w(.jpg .png .gif).include?(File.extname(name).downcase) }
-  added.each do |name|
-    logger.info "File added: #{name}"
-  end
-
-  unless added.empty?
-    added.map do |path|
-      Thread.new(path) do |path|
-        upload_response = imgur.upload(path)
-        logger.info "Link for #{path}: #{upload_response["link"]}"
-        Thread.current[:link] = upload_response["link"]
-      end
-    end.each do |thread|
-      thread.join
-
-      Clipboard.copy(thread[:link])
-      TerminalNotifier.notify("File uploaded, link copied.")
-    end
-  end
-end
+imgur_up.watch(ARGV)
 
 Signal.trap("INT")  { exit 0 }
 Signal.trap("TERM") { exit 0 }
 
-listener.start
-logger.info "Ready."
+imgur_up.logger.info "Ready."
 sleep
