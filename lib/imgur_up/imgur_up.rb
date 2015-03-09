@@ -1,5 +1,4 @@
 require 'listen'
-require 'logger'
 require 'clipboard'
 require 'terminal-notifier'
 
@@ -45,16 +44,16 @@ module ImgurUp
     def watch(directories)
       directories = directories.map { |dir| File.expand_path(dir) }
       directories.each do |dir|
-        logger.info "Listening to #{dir}"
+        ::ImgurUp.logger.info "Listening to #{dir}"
       end
 
       listener = Listen.to(directories, only: /\.(?:jpg|png|gif)$/i) do |_, added, _|
         threads = added.map do |path|
-          logger.info "File added: #{path}"
+          ::ImgurUp.logger.info "File added: #{path}"
 
           Thread.new(path) do |path|
             response = imgur.upload(path, config["album"])
-            logger.info "Link for #{path}: #{response["link"]}"
+            ::ImgurUp.logger.info "Link for #{path}: #{response["link"]}"
 
             response["link"]
           end
@@ -68,10 +67,6 @@ module ImgurUp
         end
       end
       listener.start
-    end
-
-    def logger
-      @logger ||= Logger.new(File.expand_path("~/Library/Logs/com.yihangho.imgur-auto-uploader.log"))
     end
 
     private

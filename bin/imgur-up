@@ -15,5 +15,5 @@ imgur_up.watch(ARGV)
 Signal.trap("INT")  { exit 0 }
 Signal.trap("TERM") { exit 0 }
 
-imgur_up.logger.info "Ready."
+ImgurUp.logger.info "Ready."
 sleep

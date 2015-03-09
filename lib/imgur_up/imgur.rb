@@ -34,13 +34,9 @@ module ImgurUp
     def upload(image, album)
       path = "https://api.imgur.com/3/image"
 
-      logger.info "Uploading #{image}"
+      ::ImgurUp.logger.info "Uploading #{image}"
       response = RestClient.post(path, {image: File.open(image, "rb"), album: album}, Authorization: "Bearer #{access_token}")
       JSON.parse(response)["data"]
-    end
-
-    def logger
-      @logger ||= Logger.new(File.expand_path("~/Library/Logs/com.yihangho.imgur-auto-uploader.log"))
     end
 
     def access_token
