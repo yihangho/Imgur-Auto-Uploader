@@ -15,17 +15,14 @@ module ImgurUp
     end
 
     def prompt_for_configuration
-      print "Enter your client ID: "
-      config["client_id"] = STDIN.gets.strip
-      print "Enter your client secret: "
-      config["client_secret"] = STDIN.gets.strip
+      config["client_id"]     = prompt("Enter your client ID", config["client_id"])
+      config["client_secret"] = prompt("Enter your client secret", config["client_secret"])
 
       self.imgur = Imgur.new(config["client_id"], config["client_secret"])
 
       puts "Log on to the following URL to obtain a PIN."
       puts imgur.pin_request_url
-      print "Enter PIN: "
-      pin = STDIN.gets.strip
+      pin = prompt("Enter PIN")
       authorization = imgur.authorize(pin)
       config["refresh_token"] = authorization["refresh_token"]
 
@@ -34,8 +31,9 @@ module ImgurUp
       albums.each_with_index do |album, index|
         puts "#{index+1}: #{album["title"]}"
       end
-      print "Select the album to upload new files to: "
-      album_index = STDIN.gets.to_i - 1
+
+      default_index = albums.find_index { |album| album["id"] == config["album"] }
+      album_index = prompt("Select the album to upload new files to", default_index + 1).to_i - 1
       config["album"] = albums[album_index]["id"]
 
       save_config
@@ -95,5 +93,21 @@ module ImgurUp
     end
 
     attr_writer :imgur
+
+    def prompt(message, default = nil)
+      if default.nil?
+        print "#{message}: "
+      else
+        print "#{message} (#{default}): "
+      end
+
+      output = STDIN.gets.strip
+
+      if output.empty? && !default.nil?
+        default
+      else
+        output
+      end
+    end
   end
 end
