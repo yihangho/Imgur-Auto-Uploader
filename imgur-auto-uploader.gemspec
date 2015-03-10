@@ -3,11 +3,12 @@ $:.unshift File.join(File.dirname(__FILE__), "lib")
 require 'imgur_up/version'
 
 Gem::Specification.new do |s|
-  s.name    = 'imgur-auto-uploader'
-  s.version = ImgurUp::VERSION
-  s.license = 'MIT'
-  s.author  = 'Yihang Ho'
-  s.summary = 'Automatically upload images to Imgur.'
+  s.name     = 'imgur-auto-uploader'
+  s.version  = ImgurUp::VERSION
+  s.license  = 'MIT'
+  s.author   = 'Yihang Ho'
+  s.summary  = 'Automatically upload images to Imgur.'
+  s.homepage = 'https://github.com/yihangho/Imgur-Auto-Uploader'
 
   s.files       = `git ls-files -z`.split("\x0").grep(%r{^(bin|lib)/})
   s.executables = `git ls-files -z`.split("\x0").grep(%r{^bin/}) { |f| File.basename(f) }
