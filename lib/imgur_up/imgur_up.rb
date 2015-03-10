@@ -66,7 +66,7 @@ module ImgurUp
           link = thread.value
 
           Clipboard.copy(link)
-          TerminalNotifier.notifiy("File uploaded, link copied.")
+          TerminalNotifier.notify("File uploaded, link copied.")
         end
       end
       listener.start
