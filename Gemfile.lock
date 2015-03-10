@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    imgur-auto-uploader (0.0.2)
+    imgur-auto-uploader (0.0.3)
       clipboard (~> 1.0.6)
       listen (~> 2.8.5)
       mercenary (~> 0.3.5)
