@@ -8,6 +8,14 @@ Imgur Auto-Uploader is an application that watches some directories for new imag
 gem install imgur-auto-uploader
 ```
 
+### Linux
+
+We additionally need `xclip` or `xsel`. On Ubuntu, this can be installed with `sudo apt-get install xclip`.
+
+### Windows
+
+We need the `ffi` gem: `gem install ffi`.
+
 ## Configuration
 
 1. You need an Imgur account. You also need to [register an application](https://api.imgur.com/oauth2/addclient) on Imgur to obtain your client ID and client secret. Under authorization, choose "OAuth2 authorization without a callback URL".
